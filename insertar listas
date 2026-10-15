@@ -36,11 +36,10 @@ void insertar(TLD *LD){
         if(LD->pri == NULL)//VACIA
             LD->pri = LD->ult = nuevo;
         else{
-            if(LD->pri == LD->ult){//insertar al final, funciona para un solo elemento o varios
-                nuevo->ant = LD->ult;
-                LD->ult->sig = nuevo;
-                LD->ult = nuevo;
-            }
+            //insertar al final, funciona para un solo elemento o varios
+            nuevo->ant = LD->ult;
+            LD->ult->sig = nuevo;
+            LD->ult = nuevo;
         }
         printf("desea agregar un nuevo valor? Si(1)/No(0)");
         scanf("%d",&continuar);
@@ -178,34 +177,29 @@ void eliminar(TLD *LD, int x){
     if(LD->pri == NULL) // vacia
         printf("no hay elementos para eliminar");
     else{
-        if (LD->pri == LD->ult) //un solo elemento
-            if(LD->pri->dato == x){
-                elim = LD->pri;
-                LD->pri = LD->ult = NULL;
-                free(elim);
-            }
-        else{ //mas de un elemento
             act = LD->pri;
             while (act != NULL){
                 if(act->dato == x){
                     elim = act;
+										if(LD->pri == LD->ult)
+											LD->pri = LD->ult;
+										else{
                     if(act == LD->pri){ //el primero
                         LD->pri = LD->pri->sig;
                         LD->pri->ant = NULL;
-                        act = LD->pri;
                     }else{
                         if (act == LD->ult){ //el ultimo
                             LD->ult = LD->ult->ant;
                             LD->ult->sig = NULL;
-                            act = LD->ult;
                         }else{ //medio
                             act->ant->sig = act->sig;
                             act->sig->ant = act->ant;
                         }
                     }
-                }
-                act = act->sig;
-                free(elim);
+	                act = act->sig;
+	                free(elim);
+								}else
+									act = act->sig;
             }
         }
     }
@@ -216,48 +210,41 @@ void eliminar(TLD *LD, int x){
     if(LD->pri == NULL) // vacia
         printf("no hay elementos para eliminar");
     else{
-        if(LD->pri->dato <= x){
-            if(LD->pri == LD->ult) //un solo elemento
-                if(LD->pri->dato == x){
-                    elim = LD->pri;
-                    LD->pri = LD->ult = NULL;
-                    free(elim);
-                }
-            else{ //mas de un elemento
+        if(LD->pri->dato <= x && LD->ult->dato >= x);
                 if(LD->pri->dato == x){
                     while (LD->pri != NULL && LD->pri->dato == x){ //elimina el primero mientras sea
                         elim = LD->pri;
                         LD->pri = LD->pri->sig;
-                        LD->pri->ant = NULL;
                         free(elim);
                     }
                     if(LD->pri == NULL)
                         LD->ult = NULL;
+										else
+												LD->pri->ant= NULL;
                 }else{
                     act = LD->pri->sig;
                     while(act != NULL && act->dato < x){ //busca el primer x
                         act = act->sig;
                     }
-                    if (act != NULL || act->dato > x)
+                    if (act != NULL || act->dato == x)
                         encontro = 1;
-                    else{
                         while(act != NULL && act->dato == x){ //lo encontro
                             elim = act;
                             if(act == LD->ult){ //elim ultimo
                                 LD->ult = LD->ult->ant;
-                                LD->ult->sig = act = NULL;
+                                LD->ult->sig = NULL;
                             }else{ //elim en el medio
                                 act->ant->sig = act->sig;
                                 act->sig->ant = act->ant;
-                                act = act->sig;
                             }
+														act = act->sig;
                             free(elim);
                         }
                     }
                 }
             }
         }
-        if(LD->pri->dato > x || !encontro)
+        if(!encontro)
             printf("no existe %d en la lista",x);
     }
 }
