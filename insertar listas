@@ -1,0 +1,263 @@
+/*insertar al final*/
+
+//simple
+void insertar(TL *L){
+    TL nuevo,aux; int continuar=1,x;
+    aux = *L;
+    while(aux->sig == NULL){ //busca el ultimo elemento
+        aux = aux->sig;
+    }
+    while(continuar){
+        printf("ingrese un numero x");
+        scanf("%d",&x);
+        nuevo = (TL) malloc (sizeof(nodo));
+        nuevo->dato = x;
+        nuevo->sig = NULL;
+        if(aux == NULL) //LISTA VACIA
+            *L = nuevo;
+        else{ //sino agrega el nuevo al final y actualiza el aux
+            aux->sig = nuevo;
+            aux = nuevo;
+        }
+        printf("desea agregar un nuevo valor? Si(1)/No(0)");
+        scanf("%d",&continuar);
+    }
+}
+//doble
+void insertar(TLD *LD){
+    PnodoD nuevo; int continuar=1,x;
+    while(continuar){
+        printf("ingrese un numero x");
+        scanf("%d",&x);
+        nuevo = (PnodoD) malloc (sizeof(nodoD));
+        nuevo->dato = x;
+        nuevo->ant = NULL;
+        nuevo->sig = NULL;
+        if(LD->pri == NULL)//VACIA
+            LD->pri = LD->ult = nuevo;
+        else{
+            if(LD->pri == LD->ult){//insertar al final, funciona para un solo elemento o varios
+                nuevo->ant = LD->ult;
+                LD->ult->sig = nuevo;
+                LD->ult = nuevo;
+            }
+        }
+        printf("desea agregar un nuevo valor? Si(1)/No(0)");
+        scanf("%d",&continuar);
+    }
+}
+
+/*insertar ordenado*/
+
+//simple
+void insertar(TL *L){
+    TL nuevo,act,ant; int continuar=1,x;
+    while(continuar){
+        printf("ingrese un numero x");
+        scanf("%d",&x);
+        nuevo = (TL) malloc (sizeof(nodo));
+        nuevo->dato = x;
+        nuevo->sig = NULL;
+        act = *L; 
+        ant = NULL;
+        while(act != NULL && x > act->dato){ //busca donde insertar
+            ant = act;
+            act = act->sig;
+        }
+        if (*L == NULL) //VACIA
+            *L = nuevo;
+        else{
+            if(ant == NULL){ //insertar al principio
+                nuevo->sig = *L;
+                *L = nuevo;
+            }else{ //medio o final
+                ant->sig = nuevo;
+                nuevo->sig = act;
+            }
+        }
+        printf("desea agregar un nuevo valor? Si(1)/No(0)");
+        scanf("%d",&continuar);
+    }
+}
+//doble
+void insertar(TLD *LD){
+    PnodoD act,nuevo; int continuar=1,x;
+    while(continuar){
+        printf("ingrese un numero x");
+        scanf("%d",&x);
+        nuevo = (PnodoD) malloc (sizeof(nodoD));
+        nuevo->dato = x;
+        nuevo->ant = NULL;
+        nuevo->sig = NULL;
+        act = LD->pri;
+        while(act != NULL && x > act->dato) //busca donde insertar
+            act = act->sig;
+        if(LD->pri == NULL) //vacia
+            LD->pri = LD->ult = nuevo;
+        else{
+            if(act == LD->pri){ //al principio
+                nuevo->sig = LD->pri;
+                LD->pri->ant = nuevo;
+                LD->pri = nuevo;
+            }else{
+                if(act == NULL){ //al final
+                    nuevo->ant = LD->ult;
+                    LD->ult->sig = nuevo;
+                    LD->ult = nuevo;
+                }else{ //al medio
+                    act->ant->sig = nuevo;
+                    nuevo->ant = act->ant;
+                    nuevo->sig = act;
+                    act->ant = nuevo;
+                }
+            }
+        }
+        printf("desea agregar un nuevo valor? Si(1)/No(0)");
+        scanf("%d",&continuar);
+    }
+}
+
+/*eliminacion varios*/
+
+//simple no ordenada
+void eliminar(TL *L, int x){
+    TL act, ant, elim;
+    if(*L == NULL)
+        printf("la lista esta vacia, no hay elementos para eleminar");
+    else{
+        act = *L;
+        ant = NULL;
+        while(act != NULL){
+            if (act->dato == x){
+                if (act == *L){
+                    elim = *L;
+                    *L = *L->sig;
+                }else{
+                    elim = act;
+                    ant->sig = act->sig;
+                }
+                act = act->sig;
+                free(elim);
+            }else{
+                ant = act;
+                act = act->sig;
+            }
+        }
+    }
+}
+//simple ordenada
+void eliminar(TL *L, int x){
+    TL act, ant, elim;
+    if(*L == NULL)
+        printf("la lista esta vacia, no hay elementos para eleminar");
+    else{
+        act = *L;
+        ant = NULL;
+        while(act != NULL && act->dato < x){ //busca hasta encontrar el primer x
+            ant = act;
+            act = act->sig;
+        }
+        if(act == NULL || act->dato > x)
+            printf("no existe %d en la lista",x);
+        else{
+            while(act != NULL && act->dato == x){
+                elim = act;
+                act = act->sig
+                if(ant == NULL)
+                    *L = act;
+                else
+                    ant->sig = act;
+                free(elim);
+            }
+        }
+    }
+}
+//doble no ordenada
+void eliminar(TLD *LD, int x){
+    PnodoD act, elim;
+    if(LD->pri == NULL) // vacia
+        printf("no hay elementos para eliminar");
+    else{
+        if (LD->pri == LD->ult) //un solo elemento
+            if(LD->pri->dato == x){
+                elim = LD->pri;
+                LD->pri = LD->ult = NULL;
+                free(elim);
+            }
+        else{ //mas de un elemento
+            act = LD->pri;
+            while (act != NULL){
+                if(act->dato == x){
+                    elim = act;
+                    if(act == LD->pri){ //el primero
+                        LD->pri = LD->pri->sig;
+                        LD->pri->ant = NULL;
+                        act = LD->pri;
+                    }else{
+                        if (act == LD->ult){ //el ultimo
+                            LD->ult = LD->ult->ant;
+                            LD->ult->sig = NULL;
+                            act = LD->ult;
+                        }else{ //medio
+                            act->ant->sig = act->sig;
+                            act->sig->ant = act->ant;
+                        }
+                    }
+                }
+                act = act->sig;
+                free(elim);
+            }
+        }
+    }
+}
+//doble ordenada
+void eliminar(TLD *LD, int x){
+    PnodoD act, elim; int encontro=0;
+    if(LD->pri == NULL) // vacia
+        printf("no hay elementos para eliminar");
+    else{
+        if(LD->pri->dato <= x){
+            if(LD->pri == LD->ult) //un solo elemento
+                if(LD->pri->dato == x){
+                    elim = LD->pri;
+                    LD->pri = LD->ult = NULL;
+                    free(elim);
+                }
+            else{ //mas de un elemento
+                if(LD->pri->dato == x){
+                    while (LD->pri != NULL && LD->pri->dato == x){ //elimina el primero mientras sea
+                        elim = LD->pri;
+                        LD->pri = LD->pri->sig;
+                        LD->pri->ant = NULL;
+                        free(elim);
+                    }
+                    if(LD->pri == NULL)
+                        LD->ult = NULL;
+                }else{
+                    act = LD->pri->sig;
+                    while(act != NULL && act->dato < x){ //busca el primer x
+                        act = act->sig;
+                    }
+                    if (act != NULL || act->dato > x)
+                        encontro = 1;
+                    else{
+                        while(act != NULL && act->dato == x){ //lo encontro
+                            elim = act;
+                            if(act == LD->ult){ //elim ultimo
+                                LD->ult = LD->ult->ant;
+                                LD->ult->sig = act = NULL;
+                            }else{ //elim en el medio
+                                act->ant->sig = act->sig;
+                                act->sig->ant = act->ant;
+                                act = act->sig;
+                            }
+                            free(elim);
+                        }
+                    }
+                }
+            }
+        }
+        if(LD->pri->dato > x || !encontro)
+            printf("no existe %d en la lista",x);
+    }
+}
